@@ -51,11 +51,38 @@ jobs:
         mkdir -p "bakkesmodsdk\include\bakkesmod\plugin"
         mkdir -p "bakkesmodsdk\lib"
         
-        # Create minimal stub headers to allow compilation
+        # Create comprehensive stub headers for compilation
         echo "#pragma once" > "bakkesmodsdk\include\bakkesmod\plugin\bakkesmodplugin.h"
         echo "// Stub header for GitHub Actions build" >> "bakkesmodsdk\include\bakkesmod\plugin\bakkesmodplugin.h"
-        echo "// This is a placeholder - replace with actual SDK headers" >> "bakkesmodsdk\include\bakkesmod\plugin\bakkesmodplugin.h"
-        echo "// For actual builds, you need the real BakkesMod SDK" >> "bakkesmodsdk\include\bakkesmod\plugin\bakkesmodplugin.h"
+        echo "// This allows compilation but the resulting DLL won't work in BakkesMod" >> "bakkesmodsdk\include\bakkesmod\plugin\bakkesmodplugin.h"
+        echo "" >> "bakkesmodsdk\include\bakkesmod\plugin\bakkesmodplugin.h"
+        echo "namespace BakkesMod {" >> "bakkesmodsdk\include\bakkesmod\plugin\bakkesmodplugin.h"
+        echo "    namespace Plugin {" >> "bakkesmodsdk\include\bakkesmod\plugin\bakkesmodplugin.h"
+        echo "        class BakkesModPlugin {" >> "bakkesmodsdk\include\bakkesmod\plugin\bakkesmodplugin.h"
+        echo "        public:" >> "bakkesmodsdk\include\bakkesmod\plugin\bakkesmodplugin.h"
+        echo "            virtual void onLoad() {}" >> "bakkesmodsdk\include\bakkesmod\plugin\bakkesmodplugin.h"
+        echo "            virtual void onUnload() {}" >> "bakkesmodsdk\include\bakkesmod\plugin\bakkesmodplugin.h"
+        echo "        };" >> "bakkesmodsdk\include\bakkesmod\plugin\bakkesmodplugin.h"
+        echo "    }" >> "bakkesmodsdk\include\bakkesmod\plugin\bakkesmodplugin.h"
+        echo "}" >> "bakkesmodsdk\include\bakkesmod\plugin\bakkesmodplugin.h"
+        
+        # Create pluginwindow.h stub
+        echo "#pragma once" > "bakkesmodsdk\include\bakkesmod\plugin\pluginwindow.h"
+        echo "// Stub header for GitHub Actions build" >> "bakkesmodsdk\include\bakkesmod\plugin\pluginwindow.h"
+        echo "namespace BakkesMod {" >> "bakkesmodsdk\include\bakkesmod\plugin\pluginwindow.h"
+        echo "    namespace Plugin {" >> "bakkesmodsdk\include\bakkesmod\plugin\pluginwindow.h"
+        echo "        class PluginWindow {};" >> "bakkesmodsdk\include\bakkesmod\plugin\pluginwindow.h"
+        echo "    }" >> "bakkesmodsdk\include\bakkesmod\plugin\pluginwindow.h"
+        echo "}" >> "bakkesmodsdk\include\bakkesmod\plugin\pluginwindow.h"
+        
+        # Create PluginSettingsWindow.h stub
+        echo "#pragma once" > "bakkesmodsdk\include\bakkesmod\plugin\PluginSettingsWindow.h"
+        echo "// Stub header for GitHub Actions build" >> "bakkesmodsdk\include\bakkesmod\plugin\PluginSettingsWindow.h"
+        echo "namespace BakkesMod {" >> "bakkesmodsdk\include\bakkesmod\plugin\PluginSettingsWindow.h"
+        echo "    namespace Plugin {" >> "bakkesmodsdk\include\bakkesmod\plugin\PluginSettingsWindow.h"
+        echo "        class PluginSettingsWindow {};" >> "bakkesmodsdk\include\bakkesmod\plugin\PluginSettingsWindow.h"
+        echo "    }" >> "bakkesmodsdk\include\bakkesmod\plugin\PluginSettingsWindow.h"
+        echo "}" >> "bakkesmodsdk\include\bakkesmod\plugin\PluginSettingsWindow.h"
         
         # Create stub library file
         echo "// Stub library for GitHub Actions build" > "bakkesmodsdk\lib\pluginsdk.lib"
