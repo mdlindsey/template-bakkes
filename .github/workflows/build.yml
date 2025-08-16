@@ -63,11 +63,27 @@ jobs:
         
         # Create stub library file
         echo "// Stub library for GitHub Actions build" > "bakkesmodsdk\lib\pluginsdk.lib"
+        
+        # Verify the files were created
+        echo "Created stub SDK files:"
+        dir "bakkesmodsdk\include\bakkesmod\plugin"
+        dir "bakkesmodsdk\lib"
+
+    - name: Verify file structure
+      run: |
+        echo "Current directory:"
+        pwd
+        echo ""
+        echo "Directory contents:"
+        dir
+        echo ""
+        echo "Stub SDK structure:"
+        dir "bakkesmodsdk" /s
 
     - name: Build Release x64
       shell: cmd
       run: |
-        "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" && msbuild BakkesPlugin.sln /p:Configuration=Release /p:Platform=x64 /p:Environment=GitHub /p:OutDir=plugins\ /p:IntDir=build\.intermediates\Release\ /p:AdditionalIncludeDirectories="$(Build.SourcesDirectory)\bakkesmodsdk\include" /p:AdditionalLibraryDirectories="$(Build.SourcesDirectory)\bakkesmodsdk\lib" /verbosity:minimal
+        "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" && msbuild BakkesPlugin.sln /p:Configuration=Release /p:Platform=x64 /p:Environment=GitHub /p:OutDir=plugins\ /p:IntDir=build\.intermediates\Release\ /p:AdditionalIncludeDirectories="%cd%\bakkesmodsdk\include" /p:AdditionalLibraryDirectories="%cd%\bakkesmodsdk\lib" /verbosity:minimal
 
     - name: List build outputs
       run: |
