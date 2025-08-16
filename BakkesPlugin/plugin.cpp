@@ -21,7 +21,7 @@ void BakkesPlugin::onLoad()
 	Log::SetWriteLevel(Log::Level::Info);
 	Log::Info("Plugin template loaded");
 
-	new Cvar("hk_magic_num", 420, 69, 420, [=](string name, int newValue, int oldValue) {
+	Cvar::Create("hk_magic_num", 1337, 0, 1337, [=](string name, int newValue, int oldValue) {
 		Log::Info("Updated MAGIC NUMBER to " + to_string(newValue));
 	});
 	
@@ -41,6 +41,8 @@ void BakkesPlugin::onLoad()
 
 void BakkesPlugin::onUnload()
 {
+	// Clean up all cvars to prevent memory leaks
+	Cvar::CleanupAll();
 	Log::Info("Plugin template unloaded");
 }
 

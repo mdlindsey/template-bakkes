@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <memory>
 #include "global.h"
 #include "logging.h"
 
@@ -7,9 +8,29 @@ using namespace std;
 
 class Cvar {
     public:
-    inline static map<string, Cvar *> Map;
+    // Use unique_ptr with custom deleter for automatic cleanup
+    inline static map<string, unique_ptr<Cvar>> Map;
     inline static enum class DataType { Str, Int, Bool, Float };
-    static Cvar * Get(string cvarName) { return Cvar::Map[cvarName]; }
+    
+    // Get method now returns a pointer to the unique_ptr
+    static Cvar* Get(string cvarName) { 
+        auto it = Map.find(cvarName);
+        return (it != Map.end()) ? it->second.get() : nullptr;
+    }
+    
+    // Static cleanup method (now just clears the map - unique_ptr handles deletion)
+    static void CleanupAll() {
+        Map.clear();
+    }
+    
+    // Factory methods that automatically manage memory while maintaining easy syntax
+    template <typename... Args>
+    static Cvar* Create(string name, Args&&... args) {
+        auto cvar = make_unique<Cvar>(name, forward<Args>(args)...);
+        Cvar* ptr = cvar.get();
+        Map[name] = move(cvar);
+        return ptr;
+    }
 
     string name;
     DataType type;
@@ -19,14 +40,12 @@ class Cvar {
     {
         this->name = name;
         this->type = DataType::Str;
-        Cvar::Map[name] = this;
         Global::CvarManager->registerCvar(name, defaultValue);
     }
     Cvar(string name, int defaultValue)
     {
         this->name = name;
         this->type = DataType::Int;
-        Cvar::Map[name] = this;
         Global::CvarManager->registerCvar(name, to_string(defaultValue));
     }
     Cvar(string name, int defaultValue, int minValue, int maxValue)
@@ -35,7 +54,6 @@ class Cvar {
         this->min = minValue;
         this->max = maxValue;
         this->type = DataType::Int;
-        Cvar::Map[name] = this;
         Global::CvarManager->registerCvar(name, to_string(defaultValue), "", true, true, minValue, true, maxValue);
     }
 
@@ -45,7 +63,6 @@ class Cvar {
     {
         this->name = name;
         this->type = DataType::Str;
-        Cvar::Map[name] = this;
         Global::CvarManager->registerCvar(name, defaultValue)
             .addOnValueChanged([this, onChange, name](string oldValue, CVarWrapper cvar) {
                 string curValue = cvar.getStringValue();
@@ -58,7 +75,6 @@ class Cvar {
     {
         this->name = name;
         this->type = DataType::Int;
-        Cvar::Map[name] = this;
         string defaultValueStr = to_string(defaultValue);
         Global::CvarManager->registerCvar(name, defaultValueStr)
             .addOnValueChanged([this, onChange, name](string oldValueStr, CVarWrapper cvar) {
@@ -75,7 +91,6 @@ class Cvar {
         this->min = minValue;
         this->max = maxValue;
         this->type = DataType::Int;
-        Cvar::Map[name] = this;
         Global::CvarManager->registerCvar(name, to_string(defaultValue), "", true, true, minValue, true, maxValue)
             .addOnValueChanged([this, onChange, name](string oldValueStr, CVarWrapper cvar) {
                 int oldValue = stoi(oldValueStr);
