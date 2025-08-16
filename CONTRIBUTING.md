@@ -2,6 +2,24 @@
 
 Each subheader outlines a task that needs to be done.
 
+## Separate implementation from header files
+
+Restructure to the following:
+```
+BakkesPlugin/
+├── cvar/
+│   ├── cvar.h
+│   └── cvar.cpp
+├── global/
+│   ├── global.h
+│   └── global.cpp
+├── logging/
+│   ├── logging.h
+│   └── logging.cpp
+├── plugin.h
+├── plugin.cpp
+```
+
 ## imgui <> vcpkg
 
 While all other dependencies and instances of `imgui` have been replaced with those coming from `vckpg`, there is still one notable dependency in `./BakkesPlugin/pch/pch.h`:

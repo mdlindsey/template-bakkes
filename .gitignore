@@ -1,6 +1,7 @@
 build
 plugins
 vcpkg
+vcpkg_installed
 .vs
 .vcxproj.filters
 .vcxproj.user

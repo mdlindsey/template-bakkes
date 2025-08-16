@@ -1,0 +1,10 @@
+{
+  "name": "template-bakkes",
+  "version": "1.0.0",
+  "dependencies": [
+    "fmt",
+    "imgui"
+  ],
+  "builtin-baseline": "4bb07a326d9b9bce3703272a509e5bc25dd9cfd5",
+  "overrides": []
+}
