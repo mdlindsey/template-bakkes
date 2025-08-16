@@ -8,3 +8,5 @@ While all other dependencies and instances of `imgui` have been replaced with th
 ```c++
 #include "imgui/imgui.h"
 ```
+
+The BakkesMod Plugin Manager (F2) settings UI for each plugin relies on `imgui` for rendering settings. In many cases a successful build is not a guarantee of success as the settings view can still crash the game.
