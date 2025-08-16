@@ -67,7 +67,7 @@ jobs:
     - name: Build Release x64
       shell: cmd
       run: |
-        "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" && msbuild BakkesPlugin.sln /p:Configuration=Release /p:Platform=x64 /p:Environment=GitHub /p:OutDir=plugins\ /p:IntDir=build\.intermediates\Release\ /verbosity:minimal
+        "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" && msbuild BakkesPlugin.sln /p:Configuration=Release /p:Platform=x64 /p:Environment=GitHub /p:OutDir=plugins\ /p:IntDir=build\.intermediates\Release\ /p:AdditionalIncludeDirectories="$(Build.SourcesDirectory)\bakkesmodsdk\include" /p:AdditionalLibraryDirectories="$(Build.SourcesDirectory)\bakkesmodsdk\lib" /verbosity:minimal
 
     - name: List build outputs
       run: |

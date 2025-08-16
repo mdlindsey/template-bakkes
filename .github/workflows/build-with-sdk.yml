@@ -87,7 +87,7 @@ jobs:
     - name: Build project
       shell: cmd
       run: |
-        "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" && msbuild BakkesPlugin.sln /p:Configuration=Release /p:Platform=x64 /p:Environment=GitHub /p:OutDir=plugins\ /p:IntDir=build\.intermediates\Release\ /p:BuildProjectReferences=true /verbosity:minimal /maxcpucount:2
+        "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" && msbuild BakkesPlugin.sln /p:Configuration=Release /p:Platform=x64 /p:Environment=GitHub /p:OutDir=plugins\ /p:IntDir=build\.intermediates\Release\ /p:BuildProjectReferences=true /p:AdditionalIncludeDirectories="$(Build.SourcesDirectory)\bakkesmodsdk\include" /p:AdditionalLibraryDirectories="$(Build.SourcesDirectory)\bakkesmodsdk\lib" /verbosity:minimal /maxcpucount:2
 
     - name: Verify build output
       run: |
