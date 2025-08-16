@@ -1,0 +1,90 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.0
+
+    - name: Setup Visual Studio
+      uses: microsoft/setup-vs@v1.0
+      with:
+        vs-version: '2022'
+
+    - name: Create build directory
+      run: |
+        mkdir -p build
+        mkdir -p plugins
+
+    - name: Build Release x64
+      run: |
+        msbuild BakkesPlugin.sln /p:Configuration=Release /p:Platform=x64 /p:Environment=GitHub /p:OutDir=plugins\ /p:IntDir=build\.intermediates\Release\ /verbosity:minimal
+
+    - name: List build outputs
+      run: |
+        dir plugins
+        dir build
+
+    - name: Create ZIP package
+      run: |
+        $version = Get-Content "BakkesPlugin/version.h" | Select-String "V_BUILD (\d+)" | ForEach-Object { $_.Matches[0].Groups[1].Value }
+        $pluginName = "BakkesPlugin"
+        $zipName = "${pluginName}-v1.0.${version}.zip"
+        
+        # Create a temporary directory for packaging
+        mkdir temp_package
+        copy plugins\*.dll temp_package\
+        
+        # Create ZIP file
+        Compress-Archive -Path temp_package\* -DestinationPath $zipName
+        
+        # Clean up temp directory
+        Remove-Item temp_package -Recurse -Force
+        
+        echo "ZIP_NAME=$zipName" >> $env:GITHUB_ENV
+        echo "VERSION=$version" >> $env:GITHUB_ENV
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: |
+          plugins/*.dll
+          *.zip
+
+    - name: Create Release
+      if: github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          plugins/*.dll
+          *.zip
+        tag_name: v1.0.${{ env.VERSION }}
+        name: Release v1.0.${{ env.VERSION }}
+        body: |
+          Automated build from main branch
+          
+          ## Files included:
+          - Plugin DLL file
+          - ZIP package containing the plugin
+          
+          ## Installation:
+          1. Download the ZIP file
+          2. Extract to your BakkesMod plugins folder
+          3. Restart BakkesMod
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
